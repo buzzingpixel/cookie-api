@@ -36,13 +36,13 @@ class CookieApi
 
     public function retrieveCookie(string $name): ?Cookie
     {
-        $cookie = $this->cookies[$name] ?? null;
+        $cookieActual = $this->cookies[$name] ?? null;
 
-        if (! $cookie) {
+        if (! $cookieActual) {
             return null;
         }
 
-        $cookieDecode = json_decode($cookie, true);
+        $cookieDecode = json_decode($cookieActual, true);
 
         $cookieExpireTimeStamp = $cookieDecode['expire'] ?? time();
 
@@ -62,29 +62,29 @@ class CookieApi
         return $cookieModel;
     }
 
-    public function saveCookie(CookieModel $cookieModel): void
+    public function saveCookie(Cookie $cookie): void
     {
         setcookie(
-            $cookieModel->name,
+            $cookie->name(),
             json_encode([
-                'value' => $cookieModel->value,
-                'expire' => $cookieModel->expire->getTimestamp(),
-                'path' => $cookieModel->path,
-                'domain' => $cookieModel->domain,
-                'secure' => $cookieModel->secure,
-                'httpOnly' => $cookieModel->httpOnly,
+                'value' => $cookie->value(),
+                'expire' => $cookie->expire()->getTimestamp(),
+                'path' => $cookie->path(),
+                'domain' => $cookie->domain(),
+                'secure' => $cookie->secure(),
+                'httpOnly' => $cookie->httpOnly(),
             ]),
-            $cookieModel->expire->getTimestamp(),
-            $cookieModel->path,
-            $cookieModel->domain,
-            $cookieModel->secure,
-            $cookieModel->httpOnly
+            $cookie->expire()->getTimestamp(),
+            $cookie->path(),
+            $cookie->domain(),
+            $cookie->secure(),
+            $cookie->httpOnly()
         );
     }
 
-    public function deleteCookie(CookieModel $cookieModel): void
+    public function deleteCookie(Cookie $cookie): void
     {
-        $this->deleteCookieByName($cookieModel->name);
+        $this->deleteCookieByName($cookie->name());
     }
 
     public function deleteCookieByName(string $name): void
