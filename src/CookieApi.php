@@ -9,7 +9,7 @@ class CookieApi
 {
     private $cookies;
 
-    public function __construct(array $cookies)
+    public function __construct(array &$cookies)
     {
         $this->cookies = $cookies;
     }
@@ -43,6 +43,10 @@ class CookieApi
         }
 
         $cookieDecode = json_decode($cookieActual, true);
+
+        if (! $cookieDecode) {
+            return null;
+        }
 
         $cookieExpireTimeStamp = $cookieDecode['expire'] ?? time();
 
