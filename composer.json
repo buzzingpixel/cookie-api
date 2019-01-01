@@ -1,0 +1,26 @@
+{
+    "name": "buzzingpixel/cookie-api",
+    "version": "1.0.0",
+    "description": "Cookie API",
+    "authors": [
+        {
+            "name": "TJ Draper",
+            "email": "tj@buzzingpixel.com",
+            "homepage": "https://buzzingpixel.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "squizlabs/php_codesniffer": "^3.4",
+        "phpmd/phpmd": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "buzzingpixel\\cookieapi\\": "src"
+        }
+    }
+}
