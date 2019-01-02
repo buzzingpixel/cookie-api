@@ -1,6 +1,6 @@
 {
     "name": "buzzingpixel/cookie-api",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Cookie API",
     "authors": [
         {
@@ -32,6 +32,7 @@
         }
     },
     "extra": {
+        "diConfigFilePath": "src/diConfig.php",
         "twigExtensions": [
             "buzzingpixel\\cookieapi\\CookieApiTwigExtension"
         ]
