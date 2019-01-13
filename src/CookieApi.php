@@ -10,13 +10,26 @@ declare(strict_types=1);
 namespace buzzingpixel\cookieapi;
 
 use DateTime;
+use Throwable;
 
 class CookieApi
 {
     private $cookies;
+    private $encryptionKey;
 
+    /**
+     * @throws EncryptionKeyException
+     */
     public function __construct(array &$cookies)
     {
+        $this->encryptionKey = getenv('ENCRYPTION_KEY');
+
+        if (! $this->encryptionKey ||
+            strlen($this->encryptionKey) !== SODIUM_CRYPTO_SECRETBOX_KEYBYTES
+        ) {
+            throw new EncryptionKeyException();
+        }
+
         $this->cookies = $cookies;
     }
 
@@ -56,12 +69,25 @@ class CookieApi
 
         $cookieExpireTimeStamp = $cookieDecode['expire'] ?? time();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $dateTime = new DateTime();
         $dateTime->setTimestamp($cookieExpireTimeStamp);
 
+        try {
+            $value = base64_decode($cookieDecode['value'] ?? '');
+            $nonce = base64_decode($cookieDecode['nonce'] ?? '');
+            $value = sodium_crypto_secretbox_open(
+                $value,
+                $nonce,
+                $this->encryptionKey
+            );
+        } catch (Throwable $e) {
+            $value = '';
+        }
+
         $cookieModel = $this->makeCookie(
             $name,
-            $cookieDecode['value'] ?? '',
+            $value,
             $dateTime,
             $cookieDecode['path'] ?? '',
             $cookieDecode['domain'] ?? '',
@@ -74,22 +100,34 @@ class CookieApi
 
     public function saveCookie(Cookie $cookie): void
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+
+        $saveValue = json_encode([
+            'nonce' => base64_encode($nonce),
+            'value' => base64_encode(sodium_crypto_secretbox(
+                $cookie->value(),
+                $nonce,
+                $this->encryptionKey
+            )),
+            'expire' => $cookie->expire()->getTimestamp(),
+            'path' => $cookie->path(),
+            'domain' => $cookie->domain(),
+            'secure' => $cookie->secure(),
+            'httpOnly' => $cookie->httpOnly(),
+        ]);
+
         setcookie(
             $cookie->name(),
-            json_encode([
-                'value' => $cookie->value(),
-                'expire' => $cookie->expire()->getTimestamp(),
-                'path' => $cookie->path(),
-                'domain' => $cookie->domain(),
-                'secure' => $cookie->secure(),
-                'httpOnly' => $cookie->httpOnly(),
-            ]),
+            $saveValue,
             $cookie->expire()->getTimestamp(),
             $cookie->path(),
             $cookie->domain(),
             $cookie->secure(),
             $cookie->httpOnly()
         );
+
+        $this->cookies[$cookie->name()] = $saveValue;
     }
 
     public function deleteCookie(Cookie $cookie): void
