@@ -2,7 +2,15 @@
 
 Provides a an easy to use API and entity for dealing with cookies in PHP.
 
+And it does stuff like encrypting cookie contents. While you shouldn't generally put things in cookies that should be kept secret, there are always attack vectors that could be exploited and encrypting cookie contents narrows attack vectors. For instance if you store the primary key of a database row in a cookie [which you probably shouldn't, but everyone has done it], and it then becomes easy to increment or decrement that number and spoof a cookie to provide access to something that user maybe shouldn't have access to.
+
+And by using [libsodium](https://github.com/jedisct1/libsodium-php) encryption, it ensures that cookie values cannot be tampered with.
+
 ## Usage
+
+## ENCRYPTION_KEY environment variable
+
+You must have an environment variable set called `ENCRYPTION_KEY` and it must be exactly 32 characters in length. This key should be kept SECRET at all times. It's the secret key and should never be revealed to the public or else your encrypted data can be read by anyone.
 
 ### Creating a cookie entity
 
@@ -62,7 +70,7 @@ use buzzingpixel\cookieapi\CookieApi;
 /** @var CookieApi $cookieApi */
 $cookieApi = Di::get('CookieApi');
 
-// Get a cookie by its name. Returns a `\buzzingpixel\cookieapi\Cookie` or null if no cookie set
+// Get a cookie by its name. Returns a `\buzzingpixel\cookieapi\Cookie` entity or null if no cookie by that name is set
 $cookie = $cookieApi->retrieveCookie('MyCookie');
 ```
 
