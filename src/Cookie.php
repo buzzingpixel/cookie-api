@@ -10,8 +10,9 @@ declare(strict_types=1);
 namespace buzzingpixel\cookieapi;
 
 use DateTime;
+use buzzingpixel\cookieapi\interfaces\CookieInterface;
 
-class Cookie
+class Cookie implements CookieInterface
 {
     public function __construct(
         string $name,
@@ -23,6 +24,7 @@ class Cookie
         bool $httpOnly = true
     ) {
         if (! $expire) {
+            /** @noinspection PhpUnhandledExceptionInspection */
             $expire = new DateTime();
             $expire->setTimestamp(strtotime('+20 years'));
         }
