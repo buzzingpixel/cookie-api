@@ -11,12 +11,13 @@ namespace buzzingpixel\cookieapi;
 
 use Twig_Function;
 use Twig_Extension;
+use buzzingpixel\cookieapi\interfaces\CookieApiInterface;
 
 class CookieApiTwigExtension extends Twig_Extension
 {
     private $cookieApi;
 
-    public function __construct(CookieApi $cookieApi)
+    public function __construct(CookieApiInterface $cookieApi)
     {
         $this->cookieApi = $cookieApi;
     }

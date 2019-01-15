@@ -11,8 +11,10 @@ namespace buzzingpixel\cookieapi;
 
 use DateTime;
 use Throwable;
+use buzzingpixel\cookieapi\interfaces\CookieInterface;
+use buzzingpixel\cookieapi\interfaces\CookieApiInterface;
 
-class CookieApi
+class CookieApi implements CookieApiInterface
 {
     private $cookies;
     private $encryptionKey;
@@ -41,7 +43,7 @@ class CookieApi
         string $domain = '',
         bool $secure = false,
         bool $httpOnly = true
-    ): Cookie {
+    ): CookieInterface {
         return new Cookie(
             $name,
             $value,
@@ -53,7 +55,7 @@ class CookieApi
         );
     }
 
-    public function retrieveCookie(string $name): ?Cookie
+    public function retrieveCookie(string $name): ?CookieInterface
     {
         $cookieActual = $this->cookies[$name] ?? null;
 
@@ -98,7 +100,7 @@ class CookieApi
         return $cookieModel;
     }
 
-    public function saveCookie(Cookie $cookie): void
+    public function saveCookie(CookieInterface $cookie): void
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
@@ -130,7 +132,7 @@ class CookieApi
         $this->cookies[$cookie->name()] = $saveValue;
     }
 
-    public function deleteCookie(Cookie $cookie): void
+    public function deleteCookie(CookieInterface $cookie): void
     {
         $this->deleteCookieByName($cookie->name());
     }
