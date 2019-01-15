@@ -87,10 +87,10 @@ class CookieApi
 
         $cookieModel = $this->makeCookie(
             $name,
-            $value,
+            (string) $value,
             $dateTime,
-            $cookieDecode['path'] ?? '',
-            $cookieDecode['domain'] ?? '',
+            (string) ($cookieDecode['path'] ?? ''),
+            (string) ($cookieDecode['domain'] ?? ''),
             (bool) ($cookieDecode['secure'] ?? false),
             (bool) ($cookieDecode['httpOnly'] ?? true)
         );
