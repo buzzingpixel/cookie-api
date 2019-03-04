@@ -10,27 +10,33 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "ext-json": "*",
         "ext-sodium": "*",
         "buzzingpixel/corbomite-di": "^1.0"
     },
     "require-dev": {
+        "codedungeon/phpunit-result-printer": "^0.26.1",
+        "phpmd/phpmd": "^2.6",
+        "phpunit/phpunit": "^7.5",
         "roave/security-advisories": "dev-master",
         "squizlabs/php_codesniffer": "^3.4",
-        "phpmd/phpmd": "^2.6",
-        "twig/twig": "^2.6",
-        "phpunit/phpunit": "^7.5"
+        "twig/twig": "^2.6"
     },
     "autoload": {
         "psr-4": {
-            "buzzingpixel\\cookieapi\\": "src"
+            "buzzingpixel\\cookieapi\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "buzzingpixel\\tests\\": "tests/"
         }
+    },
+    "config": {
+        "bin-compat": "full",
+        "optimize-autoloader": true,
+        "sort-packages": true
     },
     "extra": {
         "diConfigFilePath": "src/diConfig.php",
