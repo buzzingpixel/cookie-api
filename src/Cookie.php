@@ -47,45 +47,43 @@ class Cookie implements CookieInterface
 
     private $value;
 
-    public function value(?string $val = null): string
+    public function value(): string
     {
-        return $this->value = $val ?: $this->value;
+        return $this->value;
     }
 
     private $expire;
 
-    public function expire(?DateTime $expire = null): DateTime
+    public function expire(): DateTime
     {
-        return $this->expire = $expire ?: $this->expire;
+        return $this->expire;
     }
 
     private $path;
 
-    public function path(?string $path = null): string
+    public function path(): string
     {
-        return $this->path = $path ?: $this->path;
+        return $this->path;
     }
 
     private $domain;
 
-    public function domain(?string $domain = null): string
+    public function domain(): string
     {
-        return $this->domain = $domain ?: $this->domain;
+        return $this->domain;
     }
 
     private $secure = false;
 
-    public function secure(?bool $secure = null): bool
+    public function secure(): bool
     {
-        return $this->secure = $secure === null ? $this->secure : $secure;
+        return $this->secure;
     }
 
     private $httpOnly = true;
 
-    public function httpOnly(?bool $httpOnly = null): bool
+    public function httpOnly(): bool
     {
-        return $this->httpOnly = $httpOnly === null ?
-            $this->httpOnly :
-            $httpOnly;
+        return $this->httpOnly;
     }
 }

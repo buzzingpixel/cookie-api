@@ -40,48 +40,41 @@ interface CookieInterface
     public function name(): string;
 
     /**
-     * Returns the cookie's value. If incoming string, value will be set.
-     * @param string|null $val
+     * Returns the cookie's value.
      * @return string
      */
-    public function value(?string $val = null): string;
+    public function value(): string;
 
     /**
      * Returns the expiration DateTime of the cookie. If no DateTime was ever
-     * set, a default future value should be specified. If incoming DateTime
-     * object, expire will be set
-     * @param DateTime|null $expire
+     * set, a default future value should be specified.
      * @return DateTime
      */
-    public function expire(?DateTime $expire = null): DateTime;
+    public function expire(): DateTime;
 
     /**
-     * Returns the cookie's path. If incoming string, value will be set.
-     * @param string|null $val
+     * Returns the cookie's path.
      * @return string
      */
-    public function path(?string $path = null): string;
+    public function path(): string;
 
     /**
-     * Returns the cookie's domain. If incoming string, value will be set.
-     * @param string|null $val
+     * Returns the cookie's domain.
      * @return string
      */
-    public function domain(?string $domain = null): string;
+    public function domain(): string;
 
     /**
-     * Returns whether the cookie is secure. If incoming boolean, value will
+     * Returns whether the cookie is secure.
      * be set.
-     * @param bool|null $secure
      * @return bool
      */
-    public function secure(?bool $secure = null): bool;
+    public function secure(): bool;
 
     /**
-     * Returns whether the cookie is http only. If incoming boolean, value will
+     * Returns whether the cookie is http only.
      * be set.
-     * @param bool|null $httpOnly
      * @return bool
      */
-    public function httpOnly(?bool $httpOnly = null): bool;
+    public function httpOnly(): bool;
 }
