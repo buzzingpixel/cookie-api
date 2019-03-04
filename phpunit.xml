@@ -21,6 +21,7 @@
             <exclude>
                 <file>src/diConfig.php</file>
                 <file>src/CookieApiTwigExtension.php</file>
+                <file>src/PhpFunctions.php</file>
             </exclude>
         </whitelist>
     </filter>

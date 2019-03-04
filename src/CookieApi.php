@@ -18,18 +18,32 @@ class CookieApi implements CookieApiInterface
 {
     private $cookies;
     private $encryptionKey;
+    private $phpFunctions;
 
-    public function __construct(array &$cookies, string $encryptionKey)
-    {
+    /**
+     * CookieApi constructor
+     * @param array $cookies
+     * @param string $encryptionKey
+     * @param PhpFunctions $phpFunctions
+     * @throws EncryptionKeyException
+     */
+    public function __construct(
+        array &$cookies,
+        string $encryptionKey,
+        PhpFunctions $phpFunctions
+    ) {
         $this->encryptionKey = $encryptionKey;
 
-        if (! $this->encryptionKey ||
-            strlen($this->encryptionKey) !== SODIUM_CRYPTO_SECRETBOX_KEYBYTES
+        $keyBytes = $this->phpFunctions->getSodiumCryptoSecretBoxKeyBytes();
+
+        if (! $encryptionKey ||
+            $this->phpFunctions->strLen($encryptionKey) !== $keyBytes
         ) {
             throw new EncryptionKeyException();
         }
 
         $this->cookies = $cookies;
+        $this->phpFunctions = $phpFunctions;
     }
 
     public function makeCookie(
@@ -60,7 +74,7 @@ class CookieApi implements CookieApiInterface
             return null;
         }
 
-        $cookieDecode = json_decode($cookieActual, true);
+        $cookieDecode = $this->phpFunctions->jsonDecode($cookieActual, true);
 
         if (! $cookieDecode) {
             return null;
@@ -73,9 +87,15 @@ class CookieApi implements CookieApiInterface
         $dateTime->setTimestamp($cookieExpireTimeStamp);
 
         try {
-            $value = base64_decode($cookieDecode['value'] ?? '');
-            $nonce = base64_decode($cookieDecode['nonce'] ?? '');
-            $value = sodium_crypto_secretbox_open(
+            $value = $this->phpFunctions->base64Decode(
+                $cookieDecode['value'] ?? ''
+            );
+
+            $nonce = $this->phpFunctions->base64Decode(
+                $cookieDecode['nonce'] ?? ''
+            );
+
+            $value = $this->phpFunctions->sodiumCryptoSecretBoxOpen(
                 $value,
                 $nonce,
                 $this->encryptionKey
@@ -100,15 +120,19 @@ class CookieApi implements CookieApiInterface
     public function saveCookie(CookieInterface $cookie): void
     {
         /** @noinspection PhpUnhandledExceptionInspection */
-        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $nonce = $this->phpFunctions->randomBytes(
+            $this->phpFunctions->getSodiumCryptoSecretBoxNOnceBytes()
+        );
 
-        $saveValue = json_encode([
-            'nonce' => base64_encode($nonce),
-            'value' => base64_encode(sodium_crypto_secretbox(
-                $cookie->value(),
-                $nonce,
-                $this->encryptionKey
-            )),
+        $saveValue = $this->phpFunctions->jsonEncode([
+            'nonce' => $this->phpFunctions->base64Encode($nonce),
+            'value' => $this->phpFunctions->base64Encode(
+                $this->phpFunctions->sodiumCryptoSecretBox(
+                    $cookie->value(),
+                    $nonce,
+                    $this->encryptionKey
+                )
+            ),
             'expire' => $cookie->expire()->getTimestamp(),
             'path' => $cookie->path(),
             'domain' => $cookie->domain(),
@@ -116,7 +140,7 @@ class CookieApi implements CookieApiInterface
             'httpOnly' => $cookie->httpOnly(),
         ]);
 
-        setcookie(
+        $this->phpFunctions->setCookie(
             $cookie->name(),
             $saveValue,
             $cookie->expire()->getTimestamp(),
@@ -137,6 +161,6 @@ class CookieApi implements CookieApiInterface
     public function deleteCookieByName(string $name): void
     {
         unset($this->cookies[$name]);
-        setcookie($name, '', -1);
+        $this->phpFunctions->setCookie($name, '', -1);
     }
 }

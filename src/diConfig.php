@@ -9,13 +9,15 @@ declare(strict_types=1);
 
 use buzzingpixel\cookieapi\CookieApi;
 use Psr\Container\ContainerInterface;
+use buzzingpixel\cookieapi\PhpFunctions;
 use buzzingpixel\cookieapi\CookieApiTwigExtension;
 
 return [
     CookieApi::class => static function () {
         return new CookieApi(
             $_COOKIE,
-            getenv('ENCRYPTION_KEY')
+            getenv('ENCRYPTION_KEY'),
+            new PhpFunctions()
         );
     },
     CookieApiTwigExtension::class => static function (ContainerInterface $di) {
