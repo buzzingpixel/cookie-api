@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace buzzingpixel\cookieapi;
 
+use function time;
 use function strlen;
 use function setcookie;
 use function json_decode;
@@ -39,6 +40,11 @@ class PhpFunctions
             $secure,
             $httpOnly
         );
+    }
+
+    public function time()
+    {
+        return time();
     }
 
     public function strLen($str)

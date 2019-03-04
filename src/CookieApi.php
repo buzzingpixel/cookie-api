@@ -22,7 +22,7 @@ class CookieApi implements CookieApiInterface
 
     /**
      * CookieApi constructor
-     * @param array $cookies
+     * @param array &$cookies
      * @param string $encryptionKey
      * @param PhpFunctions $phpFunctions
      * @throws EncryptionKeyException
@@ -32,6 +32,8 @@ class CookieApi implements CookieApiInterface
         string $encryptionKey,
         PhpFunctions $phpFunctions
     ) {
+        $this->cookies = &$cookies;
+        $this->phpFunctions = $phpFunctions;
         $this->encryptionKey = $encryptionKey;
 
         $keyBytes = $this->phpFunctions->getSodiumCryptoSecretBoxKeyBytes();
@@ -41,9 +43,6 @@ class CookieApi implements CookieApiInterface
         ) {
             throw new EncryptionKeyException();
         }
-
-        $this->cookies = $cookies;
-        $this->phpFunctions = $phpFunctions;
     }
 
     public function makeCookie(
@@ -80,7 +79,8 @@ class CookieApi implements CookieApiInterface
             return null;
         }
 
-        $cookieExpireTimeStamp = $cookieDecode['expire'] ?? time();
+        $cookieExpireTimeStamp = $cookieDecode['expire'] ??
+            $this->phpFunctions->time();
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $dateTime = new DateTime();
@@ -119,20 +119,23 @@ class CookieApi implements CookieApiInterface
 
     public function saveCookie(CookieInterface $cookie): void
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $nonce = $this->phpFunctions->randomBytes(
-            $this->phpFunctions->getSodiumCryptoSecretBoxNOnceBytes()
+        $nonceBytes = $this->phpFunctions->getSodiumCryptoSecretBoxNOnceBytes();
+
+        $nonce = $this->phpFunctions->randomBytes($nonceBytes);
+
+        $nonceBase64 = $this->phpFunctions->base64Encode($nonce);
+
+        $secretBox = $this->phpFunctions->sodiumCryptoSecretBox(
+            $cookie->value(),
+            $nonce,
+            $this->encryptionKey
         );
 
+        $secretBoxBase64 = $this->phpFunctions->base64Encode($secretBox);
+
         $saveValue = $this->phpFunctions->jsonEncode([
-            'nonce' => $this->phpFunctions->base64Encode($nonce),
-            'value' => $this->phpFunctions->base64Encode(
-                $this->phpFunctions->sodiumCryptoSecretBox(
-                    $cookie->value(),
-                    $nonce,
-                    $this->encryptionKey
-                )
-            ),
+            'nonce' => $nonceBase64,
+            'value' => $secretBoxBase64,
             'expire' => $cookie->expire()->getTimestamp(),
             'path' => $cookie->path(),
             'domain' => $cookie->domain(),
