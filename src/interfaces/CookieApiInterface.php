@@ -10,14 +10,17 @@ declare(strict_types=1);
 namespace buzzingpixel\cookieapi\interfaces;
 
 use DateTime;
+use buzzingpixel\cookieapi\EncryptionKeyException;
 
 interface CookieApiInterface
 {
     /**
      * CookieApiInterface constructor
      * @param array $cookies
+     * @param string $encryptionKey
+     * @throws EncryptionKeyException
      */
-    public function __construct(array &$cookies);
+    public function __construct(array &$cookies, string $encryptionKey);
 
     public function makeCookie(
         string $name,

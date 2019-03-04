@@ -19,12 +19,9 @@ class CookieApi implements CookieApiInterface
     private $cookies;
     private $encryptionKey;
 
-    /**
-     * @throws EncryptionKeyException
-     */
-    public function __construct(array &$cookies)
+    public function __construct(array &$cookies, string $encryptionKey)
     {
-        $this->encryptionKey = getenv('ENCRYPTION_KEY');
+        $this->encryptionKey = $encryptionKey;
 
         if (! $this->encryptionKey ||
             strlen($this->encryptionKey) !== SODIUM_CRYPTO_SECRETBOX_KEYBYTES
