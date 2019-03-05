@@ -13,12 +13,10 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use buzzingpixel\cookieapi\Cookie;
 
-class CookieWithDomainTest extends TestCase
+class SendPathTest extends TestCase
 {
     public function test()
     {
-        $domain = 'testdomain.com';
-
         $testPath = '/test/path';
 
         /** @noinspection PhpUnhandledExceptionInspection */
@@ -29,8 +27,7 @@ class CookieWithDomainTest extends TestCase
             'TestName',
             'TestValue',
             $testDateTime,
-            $testPath,
-            $domain
+            $testPath
         );
 
         self::assertEquals('TestName', $cookie->name());
@@ -44,7 +41,7 @@ class CookieWithDomainTest extends TestCase
 
         self::assertEquals($testPath, $cookie->path());
 
-        self::assertEquals($domain, $cookie->domain());
+        self::assertEquals('', $cookie->domain());
 
         self::assertFalse($cookie->secure());
 

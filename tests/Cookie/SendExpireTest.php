@@ -13,14 +13,10 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use buzzingpixel\cookieapi\Cookie;
 
-class CookieWithHttpOnlyFalseTest extends TestCase
+class SendExpireTest extends TestCase
 {
     public function test()
     {
-        $domain = 'testdomain.com';
-
-        $testPath = '/test/path';
-
         /** @noinspection PhpUnhandledExceptionInspection */
         $testDateTime = new DateTime();
         $testDateTime->setTimestamp(strtotime('+5 years'));
@@ -28,11 +24,7 @@ class CookieWithHttpOnlyFalseTest extends TestCase
         $cookie = new Cookie(
             'TestName',
             'TestValue',
-            $testDateTime,
-            $testPath,
-            $domain,
-            true,
-            false
+            $testDateTime
         );
 
         self::assertEquals('TestName', $cookie->name());
@@ -44,12 +36,12 @@ class CookieWithHttpOnlyFalseTest extends TestCase
             $cookie->expire()->getTimestamp()
         );
 
-        self::assertEquals($testPath, $cookie->path());
+        self::assertEquals('/', $cookie->path());
 
-        self::assertEquals($domain, $cookie->domain());
+        self::assertEquals('', $cookie->domain());
 
-        self::assertTrue($cookie->secure());
+        self::assertFalse($cookie->secure());
 
-        self::assertFalse($cookie->httpOnly());
+        self::assertTrue($cookie->httpOnly());
     }
 }

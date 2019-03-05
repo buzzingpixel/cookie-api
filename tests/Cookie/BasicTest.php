@@ -13,22 +13,18 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use buzzingpixel\cookieapi\Cookie;
 
-class CookieWithPathTest extends TestCase
+class BasicTest extends TestCase
 {
     public function test()
     {
-        $testPath = '/test/path';
+        $cookie = new Cookie(
+            'TestName',
+            'TestValue'
+        );
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $testDateTime = new DateTime();
-        $testDateTime->setTimestamp(strtotime('+5 years'));
-
-        $cookie = new Cookie(
-            'TestName',
-            'TestValue',
-            $testDateTime,
-            $testPath
-        );
+        $testDateTime->setTimestamp(strtotime('+20 years'));
 
         self::assertEquals('TestName', $cookie->name());
 
@@ -39,7 +35,7 @@ class CookieWithPathTest extends TestCase
             $cookie->expire()->getTimestamp()
         );
 
-        self::assertEquals($testPath, $cookie->path());
+        self::assertEquals('/', $cookie->path());
 
         self::assertEquals('', $cookie->domain());
 

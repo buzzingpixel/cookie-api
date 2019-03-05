@@ -13,7 +13,7 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use buzzingpixel\cookieapi\Cookie;
 
-class CookieWithSecureTrueTest extends TestCase
+class SendHttpOnlyFalseTest extends TestCase
 {
     public function test()
     {
@@ -31,7 +31,8 @@ class CookieWithSecureTrueTest extends TestCase
             $testDateTime,
             $testPath,
             $domain,
-            true
+            true,
+            false
         );
 
         self::assertEquals('TestName', $cookie->name());
@@ -49,6 +50,6 @@ class CookieWithSecureTrueTest extends TestCase
 
         self::assertTrue($cookie->secure());
 
-        self::assertTrue($cookie->httpOnly());
+        self::assertFalse($cookie->httpOnly());
     }
 }
