@@ -1,5 +1,7 @@
 # BuzzingPixel Cookie API
 
+<p><a href="https://travis-ci.org/buzzingpixel/cookie-api"><img src="https://travis-ci.org/buzzingpixel/cookie-api.svg?branch=master"></a></p>
+
 Provides a an easy to use API and entity for dealing with cookies in PHP.
 
 And it does stuff like encrypting cookie contents. While you shouldn't generally put things in cookies that should be kept secret, there are always attack vectors that could be exploited and encrypting cookie contents narrows attack vectors. For instance if you store the primary key of a database row in a cookie [which you probably shouldn't, but everyone has done it], and it then becomes easy to increment or decrement that number and spoof a cookie to provide access to something that user maybe shouldn't have access to.
@@ -26,6 +28,12 @@ $cookieApi = Di::get('CookieApi');
 
 // Make a cookie entity (same as new \buzzingpixel\cookieapi\Cookie) but more testable as method call
 $cookie = $cookieApi->makeCookie('MyCookie', 'MyValue');
+```
+
+Note that the cookie entity is immutable. Therefore, in order to get a new cookie entity with a changed value, use the `$newCookie = $cookie->withPropName($val)` methods.
+
+```php
+$newCookie = $cookie->withValue('myNewValue');
 ```
 
 #### `makeCookie()` or `Cookie::__construct()` arguments

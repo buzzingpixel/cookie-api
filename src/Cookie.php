@@ -9,24 +9,42 @@ declare(strict_types=1);
 
 namespace buzzingpixel\cookieapi;
 
-use DateTime;
+use DateTimeZone;
+use LogicException;
+use DateTimeImmutable;
+use DateTimeInterface;
 use buzzingpixel\cookieapi\interfaces\CookieInterface;
 
 class Cookie implements CookieInterface
 {
+    private $isInitialized = false;
+
     public function __construct(
         string $name,
         string $value,
-        ?DateTime $expire = null,
+        ?DateTimeInterface $expire = null,
         string $path = '/',
         string $domain = '',
         bool $secure = false,
         bool $httpOnly = true
     ) {
+        if ($this->isInitialized) {
+            throw new LogicException('Cookie can only be initialized once');
+        }
+
+        if ($expire) {
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $expire = (new DateTimeImmutable())
+                ->setTimestamp($expire->getTimestamp())
+                ->setTimezone(
+                    new DateTimeZone($expire->getTimezone()->getName())
+                );
+        }
+
         if (! $expire) {
             /** @noinspection PhpUnhandledExceptionInspection */
-            $expire = new DateTime();
-            $expire->setTimestamp(strtotime('+20 years'));
+            $expire = (new DateTimeImmutable())
+                ->setTimestamp(strtotime('+20 years'));
         }
 
         $this->name = $name;
@@ -36,6 +54,28 @@ class Cookie implements CookieInterface
         $this->domain = $domain;
         $this->secure = $secure;
         $this->httpOnly = $httpOnly;
+
+        $this->isInitialized = true;
+    }
+
+    final public function __set($name, $value)
+    {
+        throw new LogicException('Setting properties is not allowed');
+    }
+
+    final public function __unset($name)
+    {
+        throw new LogicException('Setting properties is not allowed');
+    }
+
+    final public function offsetSet()
+    {
+        throw new LogicException('Setting properties is not allowed');
+    }
+
+    final public function offsetUnset()
+    {
+        throw new LogicException('Setting properties is not allowed');
     }
 
     private $name;
@@ -45,47 +85,101 @@ class Cookie implements CookieInterface
         return $this->name;
     }
 
+    public function withName(string $name): CookieInterface
+    {
+        $clone = clone $this;
+        $clone->name = $name;
+        return $clone;
+    }
+
     private $value;
 
-    public function value(?string $val = null): string
+    public function value(): string
     {
-        return $this->value = $val ?: $this->value;
+        return $this->value;
+    }
+
+    public function withValue(string $value): CookieInterface
+    {
+        $clone = clone $this;
+        $clone->value = $value;
+        return $clone;
     }
 
     private $expire;
 
-    public function expire(?DateTime $expire = null): DateTime
+    public function expire(): DateTimeInterface
     {
-        return $this->expire = $expire ?: $this->expire;
+        return $this->expire;
+    }
+
+    public function withExpire(DateTimeInterface $expire): CookieInterface
+    {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $expire = (new DateTimeImmutable())
+            ->setTimestamp($expire->getTimestamp())
+            ->setTimezone(
+                new DateTimeZone($expire->getTimezone()->getName())
+            );
+
+        $clone = clone $this;
+        $clone->expire = $expire;
+        return $clone;
     }
 
     private $path;
 
-    public function path(?string $path = null): string
+    public function path(): string
     {
-        return $this->path = $path ?: $this->path;
+        return $this->path;
+    }
+
+    public function withPath(string $path): CookieInterface
+    {
+        $clone = clone $this;
+        $clone->path = $path;
+        return $clone;
     }
 
     private $domain;
 
-    public function domain(?string $domain = null): string
+    public function domain(): string
     {
-        return $this->domain = $domain ?: $this->domain;
+        return $this->domain;
+    }
+
+    public function withDomain(string $domain): CookieInterface
+    {
+        $clone = clone $this;
+        $clone->domain = $domain;
+        return $clone;
     }
 
     private $secure = false;
 
-    public function secure(?bool $secure = null): bool
+    public function secure(): bool
     {
-        return $this->secure = $secure === null ? $this->secure : $secure;
+        return $this->secure;
+    }
+
+    public function withSecure(bool $secure): CookieInterface
+    {
+        $clone = clone $this;
+        $clone->secure = $secure;
+        return $clone;
     }
 
     private $httpOnly = true;
 
-    public function httpOnly(?bool $httpOnly = null): bool
+    public function httpOnly(): bool
     {
-        return $this->httpOnly = $httpOnly === null ?
-            $this->httpOnly :
-            $httpOnly;
+        return $this->httpOnly;
+    }
+
+    public function withHttpOnly(bool $httpOnly): CookieInterface
+    {
+        $clone = clone $this;
+        $clone->httpOnly = $httpOnly;
+        return $clone;
     }
 }

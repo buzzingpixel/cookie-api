@@ -7,15 +7,20 @@ declare(strict_types=1);
  * @license Apache-2.0
  */
 
-use corbomite\di\Di;
 use buzzingpixel\cookieapi\CookieApi;
+use Psr\Container\ContainerInterface;
+use buzzingpixel\cookieapi\PhpFunctions;
 use buzzingpixel\cookieapi\CookieApiTwigExtension;
 
 return [
-    CookieApi::class => function () {
-        return new CookieApi($_COOKIE);
+    CookieApi::class => static function () {
+        return new CookieApi(
+            $_COOKIE,
+            getenv('ENCRYPTION_KEY'),
+            new PhpFunctions()
+        );
     },
-    CookieApiTwigExtension::class => function () {
-        return new CookieApiTwigExtension(Di::get(CookieApi::class));
+    CookieApiTwigExtension::class => static function (ContainerInterface $di) {
+        return new CookieApiTwigExtension($di->get(CookieApi::class));
     }
 ];
