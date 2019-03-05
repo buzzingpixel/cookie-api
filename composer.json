@@ -2,6 +2,7 @@
     "name": "buzzingpixel/cookie-api",
     "version": "2.0.0",
     "description": "Cookie API",
+    "license":"Apache-2.0",
     "authors": [
         {
             "name": "TJ Draper",
