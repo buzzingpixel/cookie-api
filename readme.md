@@ -30,6 +30,12 @@ $cookieApi = Di::get('CookieApi');
 $cookie = $cookieApi->makeCookie('MyCookie', 'MyValue');
 ```
 
+Note that the cookie entity is immutable. Therefore, in order to get a new cookie entity with a changed value, use the `$newCookie = $cookie->withPropName($val)` methods.
+
+```php
+$newCookie = $cookie->withValue('myNewValue');
+```
+
 #### `makeCookie()` or `Cookie::__construct()` arguments
 
 ##### `$name`
