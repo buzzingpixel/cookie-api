@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace buzzingpixel\cookieapi\interfaces;
 
-use DateTime;
 use DateTimeInterface;
 
 interface CookieInterface
@@ -61,8 +60,8 @@ interface CookieInterface
     public function withValue(string $value): CookieInterface;
 
     /**
-     * Returns the expiration DateTime of the cookie. If no DateTime was ever
-     * set, a default future value should be specified.
+     * Returns the expiration DateTimeInterface of the cookie. If no
+     * DateTimeInterface was ever set a default future value should be specified
      * @return DateTimeInterface
      */
     public function expire(): DateTimeInterface;

@@ -9,15 +9,14 @@ declare(strict_types=1);
 
 namespace buzzingpixel\cookieapi\interfaces;
 
-use DateTime;
-use buzzingpixel\cookieapi\EncryptionKeyException;
+use DateTimeInterface;
 
 interface CookieApiInterface
 {
     public function makeCookie(
         string $name,
         string $value,
-        DateTime $expire = null,
+        DateTimeInterface $expire = null,
         string $path = '/',
         string $domain = '',
         bool $secure = false,

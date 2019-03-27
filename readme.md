@@ -48,7 +48,7 @@ Type: `string`. Required. The value of the cookie.
 
 ##### `$expire`
 
-Type: `DateTime` class. Optional. Defaults to 20 years in future.
+Type: `DateTimeInterface` class. Optional. Defaults to 20 years in future.
 
 ##### `$path`
 
