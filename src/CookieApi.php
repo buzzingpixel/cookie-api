@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace buzzingpixel\cookieapi;
 
-use DateTime;
 use Throwable;
+use DateTimeImmutable;
+use DateTimeInterface;
 use buzzingpixel\cookieapi\interfaces\CookieInterface;
 use buzzingpixel\cookieapi\interfaces\CookieApiInterface;
 
@@ -48,7 +49,7 @@ class CookieApi implements CookieApiInterface
     public function makeCookie(
         string $name,
         string $value,
-        DateTime $expire = null,
+        DateTimeInterface $expire = null,
         string $path = '/',
         string $domain = '',
         bool $secure = false,
@@ -83,8 +84,8 @@ class CookieApi implements CookieApiInterface
             $this->phpFunctions->time();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $dateTime = new DateTime();
-        $dateTime->setTimestamp($cookieExpireTimeStamp);
+        $dateTime = new DateTimeImmutable();
+        $dateTime = $dateTime->setTimestamp($cookieExpireTimeStamp);
 
         try {
             $value = $this->phpFunctions->base64Decode(
